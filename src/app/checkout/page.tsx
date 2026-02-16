@@ -1,12 +1,12 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Truck, Package, Phone, Mail, User, School } from "lucide-react";
 import Link from "next/link";
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const product_id = searchParams.get("product");
   const product_name = searchParams.get("name") || "";
@@ -194,5 +194,17 @@ export default function CheckoutPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-32 w-32 animate-spin rounded-full border-b-2 border-t-2 border-primary"></div>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }
