@@ -17,9 +17,9 @@ export const getStrapiURL = (path = "") => {
 };
 
 // Helper to extract image URL
-export const getStrapiMedia = (url: string) => {
+export const getStrapiMedia = (url: string | null | undefined): string | undefined => {
   if (url == null) {
-    return null;
+    return undefined;
   }
 
   // If the image URL is already absolute, return it
