@@ -6,6 +6,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import ProductIllustration from "@/components/ProductIllustration";
+import { cn } from "@/lib/utils";
 
 interface Product {
   id: number;
@@ -231,43 +232,43 @@ export default function ProductsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <motion.div
           className="flex flex-col items-center gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-primary" />
-          <p className="text-sm font-medium text-gray-400">Loading products...</p>
+          <p className="font-body text-sm font-medium text-gray-400">Loading products...</p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background font-body text-foreground">
       {/* Hero banner */}
-      <div className="bg-black px-6 py-16 text-white">
+      <div className="bg-foreground px-4 py-16 text-background">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="text-sm font-bold uppercase tracking-widest text-indigo-400">
+            <span className="text-sm font-body font-bold uppercase tracking-widest text-primary">
               Collection
             </span>
-            <h1 className="mt-2 text-5xl font-black tracking-tight md:text-7xl">
+            <h1 className="mt-2 font-display text-5xl font-black tracking-tight md:text-7xl">
               Our Products
             </h1>
-            <p className="mt-4 max-w-xl text-lg text-gray-400">
+            <p className="mt-4 max-w-xl text-lg font-body text-gray-400">
               Premium school supplies curated for excellence. From science labs to art studios.
             </p>
           </motion.div>
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mx-auto max-w-7xl px-4 py-12">
         {/* Filters */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -283,7 +284,7 @@ export default function ProductsPage() {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border border-gray-200 bg-gray-50 py-3 pl-11 pr-4 text-sm font-medium transition-colors focus:border-primary focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-full border border-gray-200 bg-card px-4 py-3 pl-11 pr-4 text-sm font-body font-medium text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -294,11 +295,12 @@ export default function ProductsPage() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`rounded-full px-4 py-2 text-xs font-bold uppercase tracking-wider transition-all ${
+                className={cn(
+                  "rounded-full px-4 py-2 text-xs font-body font-bold uppercase tracking-wider transition-all",
                   selectedCategory === cat
-                    ? "bg-black text-white shadow-lg"
-                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                }`}
+                    ? "bg-foreground text-background shadow-lg hover:bg-primary"
+                    : "bg-card text-gray-600 hover:bg-gray-100"
+                )}
               >
                 {cat}
               </button>
@@ -310,7 +312,7 @@ export default function ProductsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs font-medium text-gray-700 focus:border-primary focus:outline-none"
+                className="rounded-lg border border-gray-200 bg-card px-3 py-2 text-xs font-body font-medium text-foreground focus:border-primary focus:outline-none focus:ring-primary/20"
               >
                 <option value="name">Name A-Z</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -321,7 +323,7 @@ export default function ProductsPage() {
         </motion.div>
 
         {/* Results count */}
-        <p className="mb-6 text-sm text-gray-400">
+        <p className="mb-6 text-sm font-body text-gray-500">
           Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""}
         </p>
 
@@ -339,11 +341,12 @@ export default function ProductsPage() {
                 <motion.div
                   key={product.id}
                   layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -20 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:shadow-xl hover:border-gray-200"
+                  whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)", scale: 1.01 }}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-card shadow-sm transition-all duration-300 hover:border-primary/20"
                 >
                   <Link
                     href={`/products/${product.id}`}
@@ -354,11 +357,12 @@ export default function ProductsPage() {
                     {/* Stock badge */}
                     <div className="absolute top-3 right-3">
                       <span
-                        className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                        className={cn(
+                          "rounded-full px-2 py-1 text-[10px] font-body font-bold uppercase tracking-wider",
                           stock === "In Stock"
                             ? "bg-green-100 text-green-700"
                             : "bg-amber-100 text-amber-700"
-                        }`}
+                        )}
                       >
                         {stock}
                       </span>
@@ -369,7 +373,7 @@ export default function ProductsPage() {
                       <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileHover={{ opacity: 1, y: 0 }}
-                        className="rounded-full bg-black px-4 py-2 text-xs font-bold text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                        className="rounded-full bg-foreground px-4 py-2 text-xs font-body font-bold text-background opacity-0 transition-opacity duration-300 hover:bg-primary"
                       >
                         View Details
                       </motion.span>
@@ -377,10 +381,10 @@ export default function ProductsPage() {
                   </Link>
 
                   <div className="flex flex-1 flex-col p-5">
-                    <div className="mb-2 text-[10px] font-bold uppercase tracking-widest text-primary">
+                    <div className="mb-2 text-[10px] font-body font-bold uppercase tracking-widest text-primary">
                       {category}
                     </div>
-                    <h2 className="mb-2 text-base font-bold text-gray-900 line-clamp-1">
+                    <h2 className="mb-2 font-display text-lg font-bold text-foreground line-clamp-1">
                       <Link
                         href={`/products/${product.id}`}
                         className="transition-colors hover:text-primary"
@@ -388,17 +392,17 @@ export default function ProductsPage() {
                         {name}
                       </Link>
                     </h2>
-                    <p className="mb-4 flex-1 text-sm text-gray-500 line-clamp-2 leading-relaxed">
+                    <p className="mb-4 flex-1 text-sm font-body text-gray-500 line-clamp-2 leading-relaxed">
                       {desc}
                     </p>
 
                     <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
-                      <span className="text-xl font-black text-gray-900">
+                      <span className="font-display text-2xl font-black text-foreground">
                         ₹{price.toLocaleString()}
                       </span>
                       <Link
                         href={`/products/${product.id}`}
-                        className="rounded-full bg-black px-4 py-2 text-xs font-bold text-white transition-all hover:bg-primary hover:shadow-lg active:scale-95"
+                        className="rounded-full bg-foreground px-4 py-2 text-xs font-body font-bold text-background transition-all hover:bg-primary hover:shadow-lg active:scale-95"
                       >
                         Buy Now
                       </Link>
@@ -418,8 +422,8 @@ export default function ProductsPage() {
             className="flex flex-col items-center justify-center py-24 text-center"
           >
             <div className="mb-4 text-6xl">🔍</div>
-            <h3 className="text-xl font-bold text-gray-900">No products found</h3>
-            <p className="mt-2 text-sm text-gray-500">
+            <h3 className="font-display text-xl font-bold text-foreground">No products found</h3>
+            <p className="mt-2 text-sm font-body text-gray-500">
               Try adjusting your search or filter criteria.
             </p>
             <button
@@ -427,7 +431,7 @@ export default function ProductsPage() {
                 setSearchQuery("");
                 setSelectedCategory("All");
               }}
-              className="mt-6 rounded-full bg-black px-6 py-2 text-sm font-bold text-white transition-colors hover:bg-primary"
+              className="mt-6 rounded-full bg-foreground px-6 py-2 text-sm font-body font-bold text-background transition-colors hover:bg-primary"
             >
               Clear Filters
             </button>

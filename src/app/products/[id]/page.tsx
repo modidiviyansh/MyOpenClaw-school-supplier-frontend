@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, CheckCircle, Truck, Package, Shield, Star } from "lucide-react";
 import Link from "next/link";
 import ProductIllustration from "@/components/ProductIllustration";
+import { cn } from "@/lib/utils";
 
 interface Product {
   id: number;
@@ -196,14 +197,14 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-white">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <motion.div
           className="flex flex-col items-center gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-primary" />
-          <p className="text-sm font-medium text-gray-400">Loading product...</p>
+          <p className="font-body text-sm font-medium text-gray-400">Loading product...</p>
         </motion.div>
       </div>
     );
@@ -211,13 +212,13 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-white">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background">
         <div className="text-6xl mb-4">📦</div>
-        <h2 className="text-2xl font-bold text-gray-900">Product not found</h2>
-        <p className="mt-2 text-gray-500">This product doesn&apos;t exist or has been removed.</p>
+        <h2 className="font-display text-2xl font-bold text-foreground">Product not found</h2>
+        <p className="mt-2 text-sm font-body text-gray-500">This product doesn&apos;t exist or has been removed.</p>
         <Link
           href="/products"
-          className="mt-6 rounded-full bg-black px-6 py-3 text-sm font-bold text-white hover:bg-primary transition-colors"
+          className="mt-6 rounded-full bg-foreground px-6 py-3 text-sm font-body font-bold text-background hover:bg-primary transition-colors"
         >
           Back to Products
         </Link>
@@ -247,15 +248,16 @@ export default function ProductDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto max-w-7xl px-6 py-12">
+    <div className="min-h-screen bg-background font-body text-foreground">
+      <div className="mx-auto max-w-7xl px-4 py-12">
         <motion.div
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
         >
           <Link
             href="/products"
-            className="mb-8 inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+            className="mb-8 inline-flex items-center rounded-full bg-gray-100 px-4 py-2 text-sm font-body font-medium text-gray-600 transition-colors hover:bg-gray-200"
           >
             <ArrowLeft className="mr-2 h-4 w-4" /> Back to Products
           </Link>
@@ -264,39 +266,41 @@ export default function ProductDetailPage() {
         <div className="mt-8 grid grid-cols-1 gap-12 lg:grid-cols-2">
           {/* Product Illustration */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="relative aspect-square overflow-hidden rounded-3xl border border-gray-100"
+            initial={{ opacity: 0, x: -30, rotateY: -15 }}
+            animate={{ opacity: 1, x: 0, rotateY: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="relative aspect-square overflow-hidden rounded-3xl border border-gray-100 bg-card shadow-lg flex items-center justify-center"
           >
             <ProductIllustration category={category} size={240} />
+            <div className="absolute inset-0 bg-gradient-to-br from-card/10 via-transparent to-transparent pointer-events-none" />
           </motion.div>
 
           {/* Product Details */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
             className="flex flex-col justify-center"
           >
-            <div className="mb-3 text-xs font-bold uppercase tracking-widest text-primary">
+            <div className="mb-3 text-xs font-body font-bold uppercase tracking-widest text-primary">
               {category}
             </div>
-            <h1 className="mb-4 text-4xl font-black tracking-tight text-gray-900 md:text-5xl">
+            <h1 className="mb-4 font-display text-4xl font-black tracking-tight text-foreground md:text-6xl">
               {name}
             </h1>
-            <p className="mb-8 text-lg leading-relaxed text-gray-500">{desc}</p>
+            <p className="mb-8 text-lg font-body leading-relaxed text-gray-600">{desc}</p>
 
             <div className="mb-8 flex items-center gap-4">
-              <span className="text-4xl font-black text-gray-900">
+              <span className="font-display text-4xl font-black text-foreground">
                 ₹{price.toLocaleString()}
               </span>
               <span
-                className={`rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider ${
+                className={cn(
+                  "rounded-full px-3 py-1 text-xs font-body font-bold uppercase tracking-wider",
                   stock === "In Stock"
                     ? "bg-green-100 text-green-700"
                     : "bg-amber-100 text-amber-700"
-                }`}
+                )}
               >
                 {stock}
               </span>
@@ -304,47 +308,72 @@ export default function ProductDetailPage() {
 
             {/* Info cards */}
             <div className="mb-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="flex items-center gap-3 rounded-2xl bg-gray-50 p-4">
-                <Package className="h-5 w-5 text-gray-400" />
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.4 }}
+                className="flex items-center gap-3 rounded-2xl bg-card p-4 border border-gray-100 shadow-sm"
+              >
+                <Package className="h-5 w-5 text-primary" />
                 <div>
-                  <div className="text-xs text-gray-400">Pack Size</div>
-                  <div className="text-sm font-bold text-gray-900">{qtyInSet} units</div>
+                  <div className="text-xs font-body text-gray-500">Pack Size</div>
+                  <div className="text-sm font-bold font-body text-foreground">{qtyInSet} units</div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-2xl bg-gray-50 p-4">
-                <Star className="h-5 w-5 text-gray-400" />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="flex items-center gap-3 rounded-2xl bg-card p-4 border border-gray-100 shadow-sm"
+              >
+                <Star className="h-5 w-5 text-accent" />
                 <div>
-                  <div className="text-xs text-gray-400">Level</div>
-                  <div className="text-sm font-bold text-gray-900">{level}</div>
+                  <div className="text-xs font-body text-gray-500">Level</div>
+                  <div className="text-sm font-bold font-body text-foreground">{level}</div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3 rounded-2xl bg-gray-50 p-4">
-                <Truck className="h-5 w-5 text-gray-400" />
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.4 }}
+                className="flex items-center gap-3 rounded-2xl bg-card p-4 border border-gray-100 shadow-sm"
+              >
+                <Truck className="h-5 w-5 text-secondary" />
                 <div>
-                  <div className="text-xs text-gray-400">Shipping</div>
-                  <div className="text-sm font-bold text-gray-900">Free</div>
+                  <div className="text-xs font-body text-gray-500">Shipping</div>
+                  <div className="text-sm font-bold font-body text-foreground">Free</div>
                 </div>
-              </div>
+              </motion.div>
             </div>
 
             {/* Trust badges */}
-            <div className="mb-8 flex flex-wrap gap-4 text-xs text-gray-500">
-              <span className="flex items-center gap-1">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.4 }}
+              className="mb-8 flex flex-wrap gap-4 text-xs font-body text-gray-500"
+            >
+              <span className="flex items-center gap-1 text-gray-600">
                 <CheckCircle className="h-3.5 w-3.5 text-green-500" /> Quality Assured
               </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 text-gray-600">
                 <Shield className="h-3.5 w-3.5 text-blue-500" /> Secure Payment
               </span>
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1 text-gray-600">
                 <Truck className="h-3.5 w-3.5 text-purple-500" /> Fast Delivery
               </span>
-            </div>
+            </motion.div>
 
             {/* Quantity + Buy */}
-            <div className="flex items-center gap-4">
-              <div className="flex items-center overflow-hidden rounded-full border border-gray-200 bg-gray-50">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.4 }}
+              className="flex items-center gap-4"
+            >
+              <div className="flex items-center overflow-hidden rounded-full border border-gray-200 bg-card">
                 <button
-                  className="px-5 py-3 text-lg font-bold transition-colors hover:bg-gray-100"
+                  className="px-5 py-3 text-lg font-bold font-body text-foreground transition-colors hover:bg-gray-100"
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 >
                   −
@@ -354,10 +383,10 @@ export default function ProductDetailPage() {
                   min="1"
                   value={quantity}
                   onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                  className="w-14 border-none bg-transparent text-center text-lg font-bold focus:ring-0 focus:outline-none"
+                  className="w-14 border-none bg-transparent text-center text-lg font-bold font-body focus:ring-0 focus:outline-none text-foreground"
                 />
                 <button
-                  className="px-5 py-3 text-lg font-bold transition-colors hover:bg-gray-100"
+                  className="px-5 py-3 text-lg font-bold font-body text-foreground transition-colors hover:bg-gray-100"
                   onClick={() => setQuantity(quantity + 1)}
                 >
                   +
@@ -365,14 +394,14 @@ export default function ProductDetailPage() {
               </div>
 
               <motion.button
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.02, boxShadow: "0 8px 20px rgba(79, 70, 229, 0.3)" }}
                 whileTap={{ scale: 0.98 }}
                 onClick={handleCheckout}
-                className="flex-1 rounded-full bg-black px-8 py-4 text-base font-bold text-white shadow-xl transition-all hover:bg-primary hover:shadow-2xl"
+                className="flex-1 rounded-full bg-foreground px-8 py-4 text-base font-body font-bold text-background shadow-xl transition-all hover:bg-primary hover:shadow-2xl hover:shadow-primary/20"
               >
                 Buy Now — ₹{(price * quantity).toLocaleString()}
               </motion.button>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
