@@ -22,8 +22,8 @@
   left: -200%;
   width: 400%;
   height: 400%;
-  background-image: url(/noise.png); /* Assuming a noise.png exists */
-  background-size: 200px;
+  /* background-image: url(/noise.png); Assuming a noise.png exists */
+  /* background-size: 200px; */
   animation: grain-shift 8s steps(10) infinite;
   opacity: 0.05; /* Very subtle */
   pointer-events: none;
