@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { getProducts } from "@/lib/api";
 import ProductIllustration from "@/components/ProductIllustration";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const Scene3D = dynamic(() => import("@/components/Scene3D"), { ssr: false });
 
@@ -63,7 +64,7 @@ const SAMPLE_PRODUCTS: Product[] = [
   {
     id: 3,
     product_name: "Premium Watercolor Collection",
-    description: "Professional-grade watercolor set with 48 vibrant pigments, brushes, and mixing palette.",
+    description: "Professional-grade watercolor set with 48 vibrant pigments, brushes, and mixing palette. Ideal for art classes.",
     price_inr: 1899,
     product_category: "Art & Craft",
     stock_status: "In Stock",
@@ -73,7 +74,7 @@ const SAMPLE_PRODUCTS: Product[] = [
 ];
 
 const Marquee = () => (
-  <div className="relative flex overflow-x-hidden bg-foreground py-4 text-background">
+  <div className="relative flex overflow-x-hidden bg-foreground py-4 text-background dark:bg-dark-foreground dark:text-dark-background">
     <motion.div
       className="flex whitespace-nowrap"
       animate={{ x: [0, -1000] }}
@@ -95,7 +96,7 @@ const bentoCategories = [
     subtitle: "Advanced lab equipment for modern learning",
     description: "From physics kits to chemistry sets — everything for hands-on STEM education.",
     icon: Beaker,
-    bgClass: "bg-indigo-50",
+    bgClass: "bg-indigo-50 dark:bg-indigo-950",
     gradientClass: "from-primary/20 to-secondary/20",
     accentColor: "var(--primary)",
     span: "md:col-span-2 md:row-span-2",
@@ -105,7 +106,7 @@ const bentoCategories = [
     subtitle: "Montessori & Play",
     description: "Sensory materials and play-based learning tools for early education.",
     icon: GraduationCap,
-    bgClass: "bg-yellow-50",
+    bgClass: "bg-yellow-50 dark:bg-yellow-950",
     gradientClass: "from-yellow-500/20 to-orange-500/20",
     accentColor: "#F59E0B",
     span: "",
@@ -115,7 +116,7 @@ const bentoCategories = [
     subtitle: "Active Gear",
     description: "Quality equipment for every sport and physical education program.",
     icon: Trophy,
-    bgClass: "bg-green-50",
+    bgClass: "bg-green-50 dark:bg-green-950",
     gradientClass: "from-green-500/20 to-emerald-500/20",
     accentColor: "#10B981",
     span: "",
@@ -125,7 +126,7 @@ const bentoCategories = [
     subtitle: "Creative Studio",
     description: "Professional-grade art supplies for every creative expression.",
     icon: Palette,
-    bgClass: "bg-pink-50",
+    bgClass: "bg-pink-50 dark:bg-pink-950",
     gradientClass: "from-accent/20 to-rose-500/20",
     accentColor: "var(--accent)",
     span: "",
@@ -135,7 +136,7 @@ const bentoCategories = [
     subtitle: "Writing Essentials",
     description: "Premium pens, notebooks, and organizational tools for focused learning.",
     icon: PenTool,
-    bgClass: "bg-violet-50",
+    bgClass: "bg-violet-50 dark:bg-violet-950",
     gradientClass: "from-violet-500/20 to-purple-500/20",
     accentColor: "#8B5CF6",
     span: "",
@@ -145,7 +146,7 @@ const bentoCategories = [
     subtitle: "Knowledge Library",
     description: "Textbooks, reference guides, and inspiring reads for every grade.",
     icon: BookOpen,
-    bgClass: "bg-red-50",
+    bgClass: "bg-red-50 dark:bg-red-950",
     gradientClass: "from-red-500/20 to-orange-500/20",
     accentColor: "#EF4444",
     span: "",
@@ -161,19 +162,22 @@ function BentoCard({
 }) {
   const Icon = category.icon;
   const isLarge = index === 0;
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 30, scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
+      transition={{ duration: 0.7, ease: "easeOut", delay: index * 0.1 }}
       className={cn(
-        "group relative overflow-hidden rounded-3xl p-8 transition-all duration-300 ease-out",
+        "group relative overflow-hidden rounded-3xl p-8 transition-all duration-500 ease-out border",
+        isDark ? "border-dark-card/20" : "border-gray-100",
         category.bgClass,
         category.span,
-        "hover:shadow-2xl hover:shadow-black/10",
-        "before:absolute before:inset-0 before:bg-gradient-to-br before:opacity-0 before:transition-opacity before:duration-500 before:ease-out",
+        "hover:shadow-3xl hover:shadow-black/20 dark:hover:shadow-white/5",
+        "before:absolute before:inset-0 before:bg-gradient-to-br before:opacity-0 before:transition-opacity before:duration-700 before:ease-out",
         `before:${category.gradientClass} hover:before:opacity-100` // Apply gradient on hover
       )}
     >
@@ -183,19 +187,19 @@ function BentoCard({
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.8, delay: index * 0.15 }}
+        transition={{ duration: 1, delay: index * 0.15 }}
       >
         <motion.div
-          className="absolute -right-8 -top-8 h-32 w-32 rounded-full opacity-5"
+          className="absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-5"
           style={{ backgroundColor: category.accentColor }}
           animate={{ scale: [1, 1.3, 1], rotate: [0, 90, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
-          className="absolute -bottom-4 -left-4 h-24 w-24 rounded-2xl opacity-5"
+          className="absolute -bottom-6 -left-6 h-32 w-32 rounded-2xl opacity-5"
           style={{ backgroundColor: category.accentColor }}
           animate={{ scale: [1, 1.2, 1], rotate: [0, -45, 0] }}
-          transition={{ duration: 10, repeat: Infinity, delay: 2, ease: "linear" }}
+          transition={{ duration: 12, repeat: Infinity, delay: 2, ease: "linear" }}
         />
       </motion.div>
 
@@ -204,9 +208,9 @@ function BentoCard({
         <div className="flex items-start justify-between">
           <motion.div
             className="rounded-2xl p-3 inline-flex"
-            style={{ backgroundColor: `${category.accentColor}15` }}
-            whileHover={{ rotate: 10, scale: 1.1 }}
-            transition={{ type: "spring", stiffness: 300 }}
+            style={{ backgroundColor: `${category.accentColor}1A` }}
+            whileHover={{ rotate: 10, scale: 1.15 }}
+            transition={{ type: "spring", stiffness: 300, damping: 10 }}
           >
             <Icon
               className={cn(isLarge ? "h-8 w-8" : "h-6 w-6")}
@@ -216,28 +220,28 @@ function BentoCard({
           <motion.div
             className="rounded-full px-3 py-1 text-xs font-body font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             style={{
-              backgroundColor: `${category.accentColor}15`,
+              backgroundColor: `${category.accentColor}1A`,
               color: category.accentColor,
             }}
           >
-            Explore →
+            Explore &rarr;
           </motion.div>
         </div>
 
         <div className="mt-auto pt-4">
-          <h3 className={cn("font-display font-extrabold text-foreground leading-tight", isLarge ? "text-3xl md:text-5xl" : "text-xl md:text-3xl")}>
+          <h3 className={cn("font-display font-extrabold text-foreground leading-tight dark:text-dark-foreground", isLarge ? "text-4xl md:text-6xl" : "text-xl md:text-3xl")}>
             {category.title}
           </h3>
-          <p className="mt-2 text-sm font-body text-gray-600">{category.subtitle}</p>
+          <p className="mt-2 text-sm font-body text-gray-600 dark:text-gray-400">{category.subtitle}</p>
 
           {/* Hidden description that reveals on hover */}
           <motion.div
             className="overflow-hidden mt-3"
             initial={{ height: 0, opacity: 0 }}
             whileHover={{ height: "auto", opacity: 1 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
           >
-            <p className="text-sm font-body text-gray-600 leading-relaxed">
+            <p className="text-sm font-body text-gray-600 leading-relaxed dark:text-gray-400">
               {category.description}
             </p>
           </motion.div>
@@ -255,6 +259,8 @@ function BentoCard({
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   useEffect(() => {
     async function fetchFeaturedProducts() {
@@ -289,8 +295,33 @@ export default function Home() {
     return (product as unknown as Record<string, unknown>)[field] as string | number;
   };
 
+  const heroTextVariants = {
+    hidden: { opacity: 0, y: 20, filter: "blur(8px)" },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: {
+        delay: i * 0.1 + 0.5,
+        duration: 0.8,
+        ease: [0.2, 0.8, 0.2, 1], // Fixed: changed string to array for cubic-bezier
+      },
+    }),
+  };
+
+  const staggerChildren = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary selection:text-white font-body">
+    <div className="bg-background text-foreground selection:bg-primary selection:text-white font-body dark:bg-dark-background dark:text-dark-foreground">
       <Marquee />
 
       {/* Hero Section with 3D Background */}
@@ -299,71 +330,74 @@ export default function Home() {
         <Scene3D />
 
         {/* Gradient overlay for readability */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/80 via-background/50 to-background/90" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-background/80 via-background/50 to-background/90 dark:from-dark-background/80 dark:via-dark-background/50 dark:to-dark-background/90" />
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          initial="hidden"
+          animate="visible"
+          variants={staggerChildren}
           className="relative z-10 max-w-5xl mx-auto"
         >
           <motion.span
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="mb-6 inline-flex items-center rounded-full border border-gray-200 bg-card px-4 py-1.5 text-sm font-medium text-gray-600 backdrop-blur-md shadow-sm"
+            variants={heroTextVariants}
+            custom={0}
+            className="mb-6 inline-flex items-center rounded-full border border-gray-200 bg-card/60 px-4 py-1.5 text-sm font-medium text-gray-600 backdrop-blur-md shadow-sm dark:border-dark-card/30 dark:bg-dark-card/60 dark:text-gray-400"
           >
             <Sparkles className="mr-2 h-4 w-4 text-yellow-500" />
             Next-Gen School Supplies
           </motion.span>
 
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="font-display text-6xl font-black leading-[0.9] tracking-tighter sm:text-8xl md:text-[10rem] text-foreground"
+            className="font-display text-6xl font-black leading-[0.9] tracking-tighter sm:text-8xl md:text-[10rem] text-foreground dark:text-dark-foreground"
           >
-            ELEVATE <br />
+            <motion.span variants={heroTextVariants} custom={1} className="block">
+              ELEVATE
+            </motion.span>
             <motion.span 
               className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary"
               initial={{ backgroundPosition: "0% 50%" }}
               animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              variants={heroTextVariants}
+              custom={2}
             >
               EDUCATION.
             </motion.span>
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7, duration: 0.8 }}
-            className="mx-auto mt-8 max-w-2xl text-lg font-body font-medium text-gray-600 md:text-xl"
+            variants={heroTextVariants}
+            custom={3}
+            className="mx-auto mt-8 max-w-2xl text-lg font-body font-medium text-gray-600 md:text-xl dark:text-gray-400"
           >
             Premium tools for the next generation of thinkers, creators, and
             leaders. From Montessori essentials to advanced physics kits.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.8 }}
+            initial="hidden"
+            animate="visible"
+            variants={staggerChildren}
             className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <Link
-              href="/products"
-              className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-foreground px-8 py-3 font-body font-bold text-background transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/20"
-            >
-              <span className="relative z-10">Shop Collection</span>
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 relative z-10" />
-              <span className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            </Link>
-            <Link
-              href="/contact"
-              className="inline-flex h-12 items-center justify-center rounded-full border border-gray-300 bg-card/60 px-8 py-3 font-body font-bold text-foreground backdrop-blur-sm transition-all duration-300 hover:bg-gray-100"
-            >
-              Bulk Inquiries
-            </Link>
+            <motion.div variants={heroTextVariants} custom={4}>
+              <Link
+                href="/products"
+                className="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-foreground px-8 py-3 font-body font-bold text-background transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-primary/20 dark:bg-dark-foreground dark:text-dark-background"
+              >
+                <span className="relative z-10">Shop Collection</span>
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 relative z-10" />
+                <span className="absolute inset-0 bg-gradient-to-r from-primary to-secondary opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              </Link>
+            </motion.div>
+            <motion.div variants={heroTextVariants} custom={5}>
+              <Link
+                href="/contact"
+                className="inline-flex h-12 items-center justify-center rounded-full border border-gray-300 bg-card/60 px-8 py-3 font-body font-bold text-foreground backdrop-blur-sm transition-all duration-300 hover:bg-gray-100 dark:border-dark-card/30 dark:bg-dark-card/60 dark:text-dark-foreground dark:hover:bg-dark-card"
+              >
+                Bulk Inquiries
+              </Link>
+            </motion.div>
           </motion.div>
         </motion.div>
 
@@ -373,9 +407,9 @@ export default function Home() {
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         >
-          <div className="h-10 w-6 rounded-full border-2 border-gray-400 p-1">
+          <div className="h-10 w-6 rounded-full border-2 border-gray-400 p-1 dark:border-gray-600">
             <motion.div
-              className="h-2 w-2 rounded-full bg-gray-500 mx-auto"
+              className="h-2 w-2 rounded-full bg-gray-500 mx-auto dark:bg-gray-400"
               animate={{ y: [0, 16, 0] }}
               transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             />
@@ -384,7 +418,7 @@ export default function Home() {
       </section>
 
       {/* Bento Grid Categories */}
-      <section className="px-4 py-24 bg-background">
+      <section className="px-4 py-24 bg-background dark:bg-dark-background">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -395,7 +429,7 @@ export default function Home() {
             <span className="text-sm font-body font-bold uppercase tracking-widest text-primary">
               Browse Our Range
             </span>
-            <h2 className="mt-2 font-display text-4xl font-extrabold tracking-tight md:text-7xl text-foreground">
+            <h2 className="mt-2 font-display text-4xl font-extrabold tracking-tight md:text-7xl text-foreground dark:text-dark-foreground">
               Curated Categories
             </h2>
           </motion.div>
@@ -409,7 +443,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products */}
-      <section className="bg-foreground py-24 text-background">
+      <section className="bg-foreground py-24 text-background dark:bg-dark-foreground dark:text-dark-background">
         <div className="mx-auto max-w-7xl px-4">
           <div className="mb-16 flex flex-col md:flex-row items-center md:items-end justify-between text-center md:text-left">
             <motion.div
@@ -420,13 +454,13 @@ export default function Home() {
               <span className="text-sm font-body font-bold uppercase tracking-widest text-primary">
                 Our Picks
               </span>
-              <h2 className="mt-2 font-display text-4xl font-extrabold tracking-tight md:text-7xl text-background">
+              <h2 className="mt-2 font-display text-4xl font-extrabold tracking-tight md:text-7xl text-background dark:text-dark-background">
                 Trending Now
               </h2>
             </motion.div>
             <Link
               href="/products"
-              className="mt-8 md:mt-0 inline-flex items-center rounded-full border border-gray-700 bg-transparent px-6 py-2 text-sm font-body font-medium text-gray-400 transition-colors hover:text-white hover:border-white/50"
+              className="mt-8 md:mt-0 inline-flex items-center rounded-full border border-gray-700 bg-transparent px-6 py-2 text-sm font-body font-medium text-gray-400 transition-colors hover:text-white hover:border-white/50 dark:border-dark-card/50 dark:hover:border-dark-foreground/50"
             >
               View all products <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -447,23 +481,23 @@ export default function Home() {
                   viewport={{ once: true, amount: 0.2 }}
                   transition={{ delay: index * 0.15, duration: 0.6 }}
                   whileHover={{ y: -8, scale: 1.01, boxShadow: "0 15px 30px rgba(0,0,0,0.3)" }}
-                  className="group cursor-pointer rounded-2xl bg-card-foreground/5 p-6 border border-card-foreground/10"
+                  className="group cursor-pointer rounded-2xl bg-card-foreground/5 p-6 border border-card-foreground/10 dark:bg-dark-card/5 dark:border-dark-card/10"
                 >
                   <Link href={`/products/${product.id}`}>
-                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-card-foreground/10 mb-6">
+                    <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-card-foreground/10 mb-6 dark:bg-dark-card/10">
                       <ProductIllustration category={category} size={160} />
                       <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
                     </div>
                     <div className="mt-4">
-                      <h3 className="font-display text-xl font-bold text-background">{name}</h3>
+                      <h3 className="font-display text-xl font-bold text-background dark:text-dark-background">{name}</h3>
                       <p className="mt-1 text-sm font-body text-gray-400 line-clamp-1">
                         {desc}
                       </p>
                       <div className="mt-4 flex items-center justify-between">
-                        <span className="font-display text-2xl font-black text-white">
+                        <span className="font-display text-2xl font-black text-white dark:text-dark-background">
                           ₹{price.toLocaleString()}
                         </span>
-                        <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-body font-medium text-white transition-colors group-hover:bg-primary group-hover:border-primary">
+                        <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-body font-medium text-white transition-colors group-hover:bg-primary group-hover:border-primary dark:border-dark-card/30 dark:text-dark-background dark:group-hover:bg-primary">
                           View Item
                         </span>
                       </div>
@@ -478,7 +512,7 @@ export default function Home() {
           <div className="mt-16 text-center md:hidden">
             <Link
               href="/products"
-              className="inline-flex items-center rounded-full bg-white/10 px-8 py-3 text-sm font-body font-bold text-white transition-colors hover:bg-primary"
+              className="inline-flex items-center rounded-full bg-white/10 px-8 py-3 text-sm font-body font-bold text-white transition-colors hover:bg-primary dark:bg-dark-card/20 dark:hover:bg-primary"
             >
               View All Products <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -487,7 +521,7 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-24 px-4 bg-background">
+      <section className="py-24 px-4 bg-background dark:bg-dark-background">
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
             {[
@@ -504,10 +538,10 @@ export default function Home() {
                 transition={{ delay: index * 0.1, duration: 0.6 }}
                 className="text-center"
               >
-                <div className="font-display text-5xl font-black tracking-tight text-foreground md:text-7xl">
+                <div className="font-display text-5xl font-black tracking-tight text-foreground md:text-7xl dark:text-dark-foreground">
                   {stat.value}
                 </div>
-                <div className="mt-2 text-sm font-body font-medium text-gray-500">
+                <div className="mt-2 text-sm font-body font-medium text-gray-500 dark:text-gray-400">
                   {stat.label}
                 </div>
               </motion.div>

@@ -1,24 +1,19 @@
 "use client";
 
-import dynamic from "next/dynamic";
+import { ThemeProvider } from "next-themes";
 
-const CustomCursor = dynamic(() => import("@/components/CustomCursor"), {
-  ssr: false,
-});
-const GrainOverlay = dynamic(() => import("@/components/GrainOverlay"), {
-  ssr: false,
-});
-
-export default function ClientProviders({
-  children,
-}: {
+interface ClientProvidersProps {
   children: React.ReactNode;
-}) {
+}
+
+export default function ClientProviders({ children }: ClientProvidersProps) {
   return (
-    <>
-      <CustomCursor />
-      <GrainOverlay />
+    <ThemeProvider 
+      attribute="class" 
+      defaultTheme="system" 
+      enableSystem
+    >
       {children}
-    </>
+    </ThemeProvider>
   );
 }

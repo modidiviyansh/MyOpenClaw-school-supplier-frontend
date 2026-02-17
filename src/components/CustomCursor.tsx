@@ -1,108 +1,57 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export default function CustomCursor() {
-  const [isHovering, setIsHovering] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
-  const [isMobile, setIsMobile] = useState(true);
+  const cursorX = useMotionValue(-100); // Initialize off-screen
+  const cursorY = useMotionValue(-100); // Initialize off-screen
 
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
-
-  const springConfig = { damping: 25, stiffness: 300, mass: 0.5 };
+  const springConfig = { damping: 25, stiffness: 400 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
 
+  const [isHoveringLink, setIsHoveringLink] = useState(false);
+
   useEffect(() => {
-    // Detect touch/mobile
-    const isTouchDevice =
-      "ontouchstart" in window || navigator.maxTouchPoints > 0;
-    if (isTouchDevice || window.innerWidth < 768) {
-      setIsMobile(true);
-      return;
-    }
-    setIsMobile(false);
-
     const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
-    };
-
-    const handleMouseEnter = () => setIsVisible(true);
-    const handleMouseLeave = () => setIsVisible(false);
-
-    // Track hoverable elements
-    const addHoverListeners = () => {
-      const interactiveElements = document.querySelectorAll(
-        'a, button, [role="button"], input, textarea, select, [data-cursor-hover]'
-      );
-      interactiveElements.forEach((el) => {
-        el.addEventListener("mouseenter", () => setIsHovering(true));
-        el.addEventListener("mouseleave", () => setIsHovering(false));
-      });
+      cursorX.set(e.clientX - 8); // Adjust for half cursor size (16px / 2)
+      cursorY.set(e.clientY - 8); // Adjust for half cursor size (16px / 2)
     };
 
     window.addEventListener("mousemove", moveCursor);
-    document.addEventListener("mouseenter", handleMouseEnter);
-    document.addEventListener("mouseleave", handleMouseLeave);
 
-    // Initial + observe DOM changes for dynamic elements
-    addHoverListeners();
-    const observer = new MutationObserver(() => {
-      addHoverListeners();
+    // Handle link hover effects
+    const handleMouseEnter = () => setIsHoveringLink(true);
+    const handleMouseLeave = () => setIsHoveringLink(false);
+
+    document.querySelectorAll("a, button, input[type=\'submit\'], .group").forEach((el) => {
+      el.addEventListener("mouseenter", handleMouseEnter);
+      el.addEventListener("mouseleave", handleMouseLeave);
     });
-    observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
       window.removeEventListener("mousemove", moveCursor);
-      document.removeEventListener("mouseenter", handleMouseEnter);
-      document.removeEventListener("mouseleave", handleMouseLeave);
-      observer.disconnect();
+      document.querySelectorAll("a, button, input[type=\'submit\'], .group").forEach((el) => {
+        el.removeEventListener("mouseenter", handleMouseEnter);
+        el.removeEventListener("mouseleave", handleMouseLeave);
+      });
     };
-  }, [cursorX, cursorY, isVisible]);
-
-  if (isMobile) return null;
+  }, [cursorX, cursorY]);
 
   return (
-    <>
-      {/* Main cursor dot */}
-      <motion.div
-        className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full mix-blend-difference"
-        style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        animate={{
-          width: isHovering ? 60 : 16,
-          height: isHovering ? 60 : 16,
-          opacity: isVisible ? 1 : 0,
-        }}
-        transition={{ type: "spring", damping: 20, stiffness: 300 }}
-      >
-        <div className="h-full w-full rounded-full bg-white" />
-      </motion.div>
-
-      {/* Trailing ring */}
-      <motion.div
-        className="pointer-events-none fixed top-0 left-0 z-[9998] rounded-full border border-white/50 mix-blend-difference"
-        style={{
-          x: useSpring(cursorX, { damping: 20, stiffness: 150, mass: 0.8 }),
-          y: useSpring(cursorY, { damping: 20, stiffness: 150, mass: 0.8 }),
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        animate={{
-          width: isHovering ? 80 : 40,
-          height: isHovering ? 80 : 40,
-          opacity: isVisible ? 0.5 : 0,
-        }}
-        transition={{ type: "spring", damping: 20, stiffness: 200 }}
-      />
-    </>
+    <motion.div
+      className={
+        `fixed z-[9999] rounded-full pointer-events-none transition-all duration-100 ease-out
+        ${isHoveringLink ? 'bg-primary/70 h-10 w-10 border-none' : 'bg-accent h-4 w-4 border border-primary'}`
+      }
+      style={{
+        translateX: cursorXSpring,
+        translateY: cursorYSpring,
+      }}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+    />
   );
 }

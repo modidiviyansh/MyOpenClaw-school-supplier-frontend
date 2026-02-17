@@ -1,37 +1,33 @@
-import "../styles/globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Navbar from "@/components/Navbar";
+import "./../styles/globals.css";
 import ClientProviders from "@/components/ClientProviders";
+import CustomCursor from "@/components/CustomCursor";
+import GrainOverlay from "@/components/GrainOverlay";
+import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "TheUpliftCo - Premium School Supplies",
-  description: "One-stop shop for all your school needs.",
+  title: "The Uplift Co. - Elevate Education",
+  description: "Premium school supplies for the next generation of thinkers, creators, and leaders.",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} bg-background text-foreground font-body antialiased`}>
         <ClientProviders>
-          <Navbar />
-          <main className="min-h-screen pt-16">{children}</main>
-          <footer className="bg-gray-100 py-12 text-center">
-            <div className="mx-auto max-w-7xl px-6">
-              <div className="mb-6 text-lg font-black tracking-tighter">
-                THE UPLIFT CO.
-              </div>
-              <p className="text-sm text-gray-500">
-                © {new Date().getFullYear()} TheUpliftCo. All rights reserved.
-              </p>
-            </div>
-          </footer>
+          <div className="relative min-h-screen">
+            <GrainOverlay />
+            <CustomCursor />
+            <Navbar />
+            <main className="relative z-20">{children}</main>
+          </div>
         </ClientProviders>
       </body>
     </html>

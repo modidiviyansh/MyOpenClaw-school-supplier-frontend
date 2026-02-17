@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import ProductIllustration from "@/components/ProductIllustration";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 interface Product {
   id: number;
@@ -175,6 +176,8 @@ export default function ProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState<"name" | "price-asc" | "price-desc">("name");
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   useEffect(() => {
     async function fetchData() {
@@ -232,23 +235,23 @@ export default function ProductsPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center bg-background dark:bg-dark-background">
         <motion.div
           className="flex flex-col items-center gap-4"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
         >
-          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-primary" />
-          <p className="font-body text-sm font-medium text-gray-400">Loading products...</p>
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gray-200 border-t-primary dark:border-dark-card/50 dark:border-t-primary" />
+          <p className="font-body text-sm font-medium text-gray-400 dark:text-gray-500">Loading products...</p>
         </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background font-body text-foreground">
+    <div className="min-h-screen bg-background font-body text-foreground dark:bg-dark-background dark:text-dark-foreground">
       {/* Hero banner */}
-      <div className="bg-foreground px-4 py-16 text-background">
+      <div className="bg-foreground px-4 py-16 text-background dark:bg-dark-foreground dark:text-dark-background">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -284,7 +287,7 @@ export default function ProductsPage() {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-full border border-gray-200 bg-card px-4 py-3 pl-11 pr-4 text-sm font-body font-medium text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-full border border-gray-200 bg-card px-4 py-3 pl-11 pr-4 text-sm font-body font-medium text-foreground transition-colors focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 dark:border-dark-card/30 dark:bg-dark-card dark:text-dark-foreground"
             />
           </div>
 
@@ -298,8 +301,8 @@ export default function ProductsPage() {
                 className={cn(
                   "rounded-full px-4 py-2 text-xs font-body font-bold uppercase tracking-wider transition-all",
                   selectedCategory === cat
-                    ? "bg-foreground text-background shadow-lg hover:bg-primary"
-                    : "bg-card text-gray-600 hover:bg-gray-100"
+                    ? "bg-foreground text-background shadow-lg hover:bg-primary dark:bg-dark-foreground dark:text-dark-background"
+                    : "bg-card text-gray-600 hover:bg-gray-100 dark:bg-dark-card dark:text-gray-400 dark:hover:bg-dark-card/70"
                 )}
               >
                 {cat}
@@ -312,7 +315,7 @@ export default function ProductsPage() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                className="rounded-lg border border-gray-200 bg-card px-3 py-2 text-xs font-body font-medium text-foreground focus:border-primary focus:outline-none focus:ring-primary/20"
+                className="rounded-lg border border-gray-200 bg-card px-3 py-2 text-xs font-body font-medium text-foreground focus:border-primary focus:outline-none focus:ring-primary/20 dark:border-dark-card/30 dark:bg-dark-card dark:text-dark-foreground"
               >
                 <option value="name">Name A-Z</option>
                 <option value="price-asc">Price: Low to High</option>
@@ -323,7 +326,7 @@ export default function ProductsPage() {
         </motion.div>
 
         {/* Results count */}
-        <p className="mb-6 text-sm font-body text-gray-500">
+        <p className="mb-6 text-sm font-body text-gray-500 dark:text-gray-400">
           Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? "s" : ""}
         </p>
 
@@ -345,8 +348,8 @@ export default function ProductsPage() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9, y: -20 }}
                   transition={{ duration: 0.3, delay: index * 0.05 }}
-                  whileHover={{ y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)", scale: 1.01 }}
-                  className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-card shadow-sm transition-all duration-300 hover:border-primary/20"
+                  whileHover={{ y: -5, boxShadow: isDark ? "0 10px 20px rgba(255,255,255,0.05)" : "0 10px 20px rgba(0,0,0,0.1)", scale: 1.01 }}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-card shadow-sm transition-all duration-300 hover:border-primary/20 dark:border-dark-card/20 dark:bg-dark-card"
                 >
                   <Link
                     href={`/products/${product.id}`}
@@ -360,8 +363,8 @@ export default function ProductsPage() {
                         className={cn(
                           "rounded-full px-2 py-1 text-[10px] font-body font-bold uppercase tracking-wider",
                           stock === "In Stock"
-                            ? "bg-green-100 text-green-700"
-                            : "bg-amber-100 text-amber-700"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                            : "bg-amber-100 text-amber-700 dark:bg-amber-900 dark:text-amber-300"
                         )}
                       >
                         {stock}
@@ -369,11 +372,11 @@ export default function ProductsPage() {
                     </div>
 
                     {/* Hover overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-300 group-hover:bg-black/5">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-300 group-hover:bg-black/5 dark:group-hover:bg-white/5">
                       <motion.span
                         initial={{ opacity: 0, y: 10 }}
                         whileHover={{ opacity: 1, y: 0 }}
-                        className="rounded-full bg-foreground px-4 py-2 text-xs font-body font-bold text-background opacity-0 transition-opacity duration-300 hover:bg-primary"
+                        className="rounded-full bg-foreground px-4 py-2 text-xs font-body font-bold text-background opacity-0 transition-opacity duration-300 hover:bg-primary dark:bg-dark-foreground dark:text-dark-background"
                       >
                         View Details
                       </motion.span>
@@ -384,7 +387,7 @@ export default function ProductsPage() {
                     <div className="mb-2 text-[10px] font-body font-bold uppercase tracking-widest text-primary">
                       {category}
                     </div>
-                    <h2 className="mb-2 font-display text-lg font-bold text-foreground line-clamp-1">
+                    <h2 className="mb-2 font-display text-lg font-bold text-foreground line-clamp-1 dark:text-dark-foreground">
                       <Link
                         href={`/products/${product.id}`}
                         className="transition-colors hover:text-primary"
@@ -392,17 +395,17 @@ export default function ProductsPage() {
                         {name}
                       </Link>
                     </h2>
-                    <p className="mb-4 flex-1 text-sm font-body text-gray-500 line-clamp-2 leading-relaxed">
+                    <p className="mb-4 flex-1 text-sm font-body text-gray-500 line-clamp-2 leading-relaxed dark:text-gray-400">
                       {desc}
                     </p>
 
-                    <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
-                      <span className="font-display text-2xl font-black text-foreground">
+                    <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4 dark:border-dark-card/20">
+                      <span className="font-display text-2xl font-black text-foreground dark:text-dark-foreground">
                         ₹{price.toLocaleString()}
                       </span>
                       <Link
                         href={`/products/${product.id}`}
-                        className="rounded-full bg-foreground px-4 py-2 text-xs font-body font-bold text-background transition-all hover:bg-primary hover:shadow-lg active:scale-95"
+                        className="rounded-full bg-foreground px-4 py-2 text-xs font-body font-bold text-background transition-all hover:bg-primary hover:shadow-lg active:scale-95 dark:bg-dark-foreground dark:text-dark-background"
                       >
                         Buy Now
                       </Link>
@@ -421,9 +424,9 @@ export default function ProductsPage() {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-24 text-center"
           >
-            <div className="mb-4 text-6xl">🔍</div>
-            <h3 className="font-display text-xl font-bold text-foreground">No products found</h3>
-            <p className="mt-2 text-sm font-body text-gray-500">
+            <div className="mb-4 text-6xl text-gray-400">🔍</div>
+            <h3 className="font-display text-xl font-bold text-foreground dark:text-dark-foreground">No products found</h3>
+            <p className="mt-2 text-sm font-body text-gray-500 dark:text-gray-400">
               Try adjusting your search or filter criteria.
             </p>
             <button
@@ -431,7 +434,7 @@ export default function ProductsPage() {
                 setSearchQuery("");
                 setSelectedCategory("All");
               }}
-              className="mt-6 rounded-full bg-foreground px-6 py-2 text-sm font-body font-bold text-background transition-colors hover:bg-primary"
+              className="mt-6 rounded-full bg-foreground px-6 py-2 text-sm font-body font-bold text-background transition-colors hover:bg-primary dark:bg-dark-foreground dark:text-dark-background"
             >
               Clear Filters
             </button>
