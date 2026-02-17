@@ -311,7 +311,7 @@ export default function Home() {
             <p className="mt-6 text-xl text-muted-foreground">Everything a modern institution needs, organized into premium collections.</p>
           </div>
           
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4 md:auto-rows-[300px]">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 md:auto-rows-[300px]"> {/* Changed to lg:grid-cols-3 for larger cards */}
             {bentoCategories.map((item) => (
               <BentoCard key={item.title} item={item} />
             ))}
@@ -320,7 +320,7 @@ export default function Home() {
       </section>
 
       {/* Featured Products - Spotlight treatment */}
-      <section className="py-32 bg-gray-50/50 dark:bg-gray-950/30 border-y border-gray-100 dark:border-gray-900/50">
+      <section className="py-40 bg-gray-50/50 dark:bg-gray-950/30 border-y border-gray-100 dark:border-gray-900/50"> {/* Increased padding */}
         <div className="container mx-auto px-4">
           <div className="mb-16 flex flex-col items-end justify-between gap-6 sm:flex-row">
             <div className="w-full">
@@ -341,7 +341,7 @@ export default function Home() {
 
               return (
                 <Link key={product.id} href={`/products/${product.id}`} className="group block h-full">
-                  <SpotlightCard className="h-full rounded-2xl p-0 overflow-hidden border-gray-200/60 dark:border-gray-800/60 bg-white dark:bg-gray-900/50 transition-transform duration-300 hover:-translate-y-1" spotlightColor="rgba(79, 70, 229, 0.08)">
+                  <SpotlightCard className="h-full rounded-2xl p-0 overflow-hidden border-gray-200/60 dark:border-gray-800/60 bg-white dark:bg-gray-900/50 transition-transform duration-300 hover:-translate-y-1" spotlightColor="rgba(79, 70, 229, 0.12)"> {/* Adjusted spotlight color */}
                     <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-800/50">
                       <ProductIllustration category={category} size={240} />
                     </div>
