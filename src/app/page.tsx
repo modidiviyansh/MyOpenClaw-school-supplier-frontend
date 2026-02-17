@@ -249,7 +249,7 @@ export default function Home() {
     <div className="flex min-h-screen flex-col bg-background font-body text-foreground selection:bg-primary/20 selection:text-primary relative overflow-hidden">
       
       {/* Hero Section - Kinetic Typography & Mesh Gradients */}
-      <section className="relative overflow-hidden pt-32 pb-24 lg:pt-48 lg:pb-40 flex items-center justify-center min-h-[80vh]">
+      <section className="relative overflow-hidden pt-32 pb-32 lg:pt-48 lg:pb-48 flex items-center justify-center min-h-[80vh]"> {/* Increased vertical padding */}
         <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div
             initial="hidden"
@@ -272,7 +272,7 @@ export default function Home() {
               <Line gradientWord="Education.">Education.</Line>
             </motion.h1>
             
-            <motion.p variants={sectionVariants} className="mx-auto mb-12 max-w-2xl text-xl text-muted-foreground sm:text-2xl leading-relaxed">
+            <motion.p variants={sectionVariants} className="mx-auto mb-12 max-w-3xl text-2xl text-muted-foreground sm:text-3xl leading-relaxed"> {/* Increased tagline font size, increased max-width */}
               Equipping the next generation of thinkers and creators with premium tools. 
               From Montessori essentials to advanced science labs.
             </motion.p>
@@ -280,14 +280,14 @@ export default function Home() {
             <motion.div variants={sectionVariants} className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/products"
-                className="group inline-flex h-14 w-full items-center justify-center rounded-full bg-primary px-10 text-base font-bold text-white transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 sm:w-auto"
+                className="group inline-flex h-14 w-full items-center justify-center rounded-full bg-primary px-10 text-base font-bold text-white transition-all hover:bg-primary/90 hover:shadow-2xl hover:shadow-primary/25 sm:w-auto" // Enhanced shadow
               >
                 Shop Collection
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/contact"
-                className="inline-flex h-14 w-full items-center justify-center rounded-full border border-gray-200 bg-background px-10 text-base font-bold text-foreground transition-all hover:bg-gray-50 hover:border-gray-300 sm:w-auto dark:border-gray-800 dark:hover:bg-gray-900"
+                className="inline-flex h-14 w-full items-center justify-center rounded-full border border-primary/50 bg-background px-10 text-base font-bold text-foreground transition-all hover:bg-primary/10 hover:border-primary/70 sm:w-auto dark:border-primary/40 dark:hover:bg-primary/5" // Enhanced secondary button
               >
                 Bulk Inquiries
               </Link>
@@ -297,8 +297,9 @@ export default function Home() {
         
         {/* Refined Background Mesh - Subtle & Premium */}
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[1400px] h-[1000px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/15 via-background/0 to-background/0 blur-[150px] dark:from-primary/10 dark:via-dark-background/0 dark:to-dark-background/0" />
-          <div className="absolute bottom-[-10%] right-0 w-[1000px] h-[800px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-violet-500/10 via-background/0 to-background/0 blur-[120px] dark:from-violet-500/5 dark:via-dark-background/0 dark:to-dark-background/0" />
+          <div className="absolute top-[-25%] left-1/2 -translate-x-1/2 w-[1600px] h-[1200px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/20 via-background/0 to-background/0 blur-[180px] dark:from-primary/15 dark:via-dark-background/0 dark:to-dark-background/0" /> {/* Larger, more intense */}
+          <div className="absolute bottom-[-15%] right-0 w-[1200px] h-[900px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-violet-500/15 via-background/0 to-background/0 blur-[150px] dark:from-violet-500/10 dark:via-dark-background/0 dark:to-dark-background/0" /> {/* Larger, more intense */}
+          <div className="absolute top-[10%] left-[10%] w-[800px] h-[600px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/10 via-background/0 to-background/0 blur-[100px] dark:from-accent/5 dark:via-dark-background/0 dark:to-dark-background/0" /> {/* New accent gradient */}
         </div>
       </section>
 
