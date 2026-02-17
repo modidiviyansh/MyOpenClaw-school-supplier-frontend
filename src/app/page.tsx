@@ -304,7 +304,6 @@ export default function Home() {
       transition: {
         delay: i * 0.1 + 0.5,
         duration: 0.8,
-        ease: [0.2, 0.8, 0.2, 1], // Fixed: changed string to array for cubic-bezier
       },
     }),
   };
