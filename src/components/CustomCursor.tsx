@@ -1,57 +1,103 @@
 "use client";
 
-import { motion, useMotionValue, useSpring } from "framer-motion";
-import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
+
+type CursorVariant = "default" | "text" | "link";
 
 export default function CustomCursor() {
-  const cursorX = useMotionValue(-100); // Initialize off-screen
-  const cursorY = useMotionValue(-100); // Initialize off-screen
-
-  const springConfig = { damping: 25, stiffness: 400 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
-
-  const [isHoveringLink, setIsHoveringLink] = useState(false);
+  const [mousePosition, setMousePosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [cursorVariant, setCursorVariant] = useState<CursorVariant>("default");
 
   useEffect(() => {
-    const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX - 8); // Adjust for half cursor size (16px / 2)
-      cursorY.set(e.clientY - 8); // Adjust for half cursor size (16px / 2)
+    const mouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: e.clientX,
+        y: e.clientY,
+      });
     };
 
-    window.addEventListener("mousemove", moveCursor);
+    window.addEventListener("mousemove", mouseMove);
 
-    // Handle link hover effects
-    const handleMouseEnter = () => setIsHoveringLink(true);
-    const handleMouseLeave = () => setIsHoveringLink(false);
+    return () => {
+      window.removeEventListener("mousemove", mouseMove);
+    };
+  }, []);
 
-    document.querySelectorAll("a, button, input[type=\'submit\'], .group").forEach((el) => {
-      el.addEventListener("mouseenter", handleMouseEnter);
+  const variants = {
+    default: {
+      x: mousePosition.x - 8,
+      y: mousePosition.y - 8,
+      backgroundColor: "rgba(139, 92, 246, 0.4)", // primary/40
+      width: 16,
+      height: 16,
+      mixBlendMode: "normal",
+    },
+    text: {
+      x: mousePosition.x - 24,
+      y: mousePosition.y - 24,
+      backgroundColor: "rgba(139, 92, 246, 0.6)", // primary/60
+      width: 48,
+      height: 48,
+      mixBlendMode: "difference",
+    },
+    link: {
+      x: mousePosition.x - 16,
+      y: mousePosition.y - 16,
+      backgroundColor: "rgba(59, 130, 246, 0.6)", // blue/60
+      width: 32,
+      height: 32,
+      mixBlendMode: "difference",
+    },
+  };
+
+  const spring = {
+    stiffness: 500,
+    damping: 28,
+  };
+
+  useEffect(() => {
+    const handleMouseEnter = (variant: CursorVariant) => () => setCursorVariant(variant);
+    const handleMouseLeave = () => setCursorVariant("default");
+
+    document.querySelectorAll("h1, h2, h3, h4, h5, h6, p, span.text-cursor").forEach((el) => {
+      el.addEventListener("mouseenter", handleMouseEnter("text") as EventListener);
+      el.addEventListener("mouseleave", handleMouseLeave);
+    });
+
+    document.querySelectorAll("a, button, .group").forEach((el) => {
+      el.addEventListener("mouseenter", handleMouseEnter("link") as EventListener);
       el.addEventListener("mouseleave", handleMouseLeave);
     });
 
     return () => {
-      window.removeEventListener("mousemove", moveCursor);
-      document.querySelectorAll("a, button, input[type=\'submit\'], .group").forEach((el) => {
-        el.removeEventListener("mouseenter", handleMouseEnter);
+      document.querySelectorAll("h1, h2, h3, h4, h5, h6, p, span.text-cursor").forEach((el) => {
+        el.removeEventListener("mouseenter", handleMouseEnter("text") as EventListener);
+        el.removeEventListener("mouseleave", handleMouseLeave);
+      });
+      document.querySelectorAll("a, button, .group").forEach((el) => {
+        el.removeEventListener("mouseenter", handleMouseEnter("link") as EventListener);
         el.removeEventListener("mouseleave", handleMouseLeave);
       });
     };
-  }, [cursorX, cursorY]);
+  }, []);
 
   return (
-    <motion.div
-      className={
-        `fixed z-[9999] rounded-full pointer-events-none transition-all duration-100 ease-out
-        ${isHoveringLink ? 'bg-primary/70 h-10 w-10 border-none' : 'bg-accent h-4 w-4 border border-primary'}`
-      }
-      style={{
-        translateX: cursorXSpring,
-        translateY: cursorYSpring,
-      }}
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2, ease: "easeOut" }}
-    />
+    <AnimatePresence>
+      <motion.div
+        variants={variants}
+        animate={cursorVariant}
+        transition={spring}
+        className={cn(
+          "pointer-events-none fixed z-[9999] hidden rounded-full opacity-0 lg:block",
+          "bg-primary/40 dark:bg-primary/40", // Base color for default
+          "blur-sm filter will-change-transform transform-gpu"
+        )}
+      />
+    </AnimatePresence>
   );
 }

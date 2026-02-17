@@ -77,6 +77,7 @@ const bentoCategories = [
     className: "md:col-span-2 md:row-span-2",
     bg: "bg-blue-50/50 dark:bg-blue-900/10",
     text: "text-blue-600 dark:text-blue-400",
+    spotlight: "rgba(59, 130, 246, 0.15)", // Blue spotlight
   },
   {
     title: "Kindergarten",
@@ -85,6 +86,7 @@ const bentoCategories = [
     className: "md:col-span-1",
     bg: "bg-orange-50/50 dark:bg-orange-900/10",
     text: "text-orange-600 dark:text-orange-400",
+    spotlight: "rgba(245, 158, 11, 0.15)", // Orange spotlight
   },
   {
     title: "Sports & Active",
@@ -93,6 +95,7 @@ const bentoCategories = [
     className: "md:col-span-1",
     bg: "bg-green-50/50 dark:bg-green-900/10",
     text: "text-green-600 dark:text-green-400",
+    spotlight: "rgba(16, 185, 129, 0.15)", // Green spotlight
   },
   {
     title: "Art & Craft",
@@ -101,6 +104,7 @@ const bentoCategories = [
     className: "md:col-span-1",
     bg: "bg-pink-50/50 dark:bg-pink-900/10",
     text: "text-pink-600 dark:text-pink-400",
+    spotlight: "rgba(236, 72, 153, 0.15)", // Pink spotlight
   },
   {
     title: "Stationery",
@@ -109,6 +113,7 @@ const bentoCategories = [
     className: "md:col-span-1",
     bg: "bg-violet-50/50 dark:bg-violet-900/10",
     text: "text-violet-600 dark:text-violet-400",
+    spotlight: "rgba(139, 92, 246, 0.15)", // Violet spotlight
   },
   {
     title: "Library",
@@ -117,6 +122,7 @@ const bentoCategories = [
     className: "md:col-span-1",
     bg: "bg-amber-50/50 dark:bg-amber-900/10",
     text: "text-amber-600 dark:text-amber-400",
+    spotlight: "rgba(239, 68, 68, 0.15)", // Red spotlight
   },
   {
     title: "Bulk Orders",
@@ -125,21 +131,73 @@ const bentoCategories = [
     className: "md:col-span-2", // Wider card to break the grid
     bg: "bg-primary/5 dark:bg-primary/10",
     text: "text-primary",
+    spotlight: "rgba(79, 70, 229, 0.15)", // Primary spotlight
   },
 ];
 
 function BentoCard({ item }: { item: typeof bentoCategories[0] }) {
   const Icon = item.icon;
   return (
-    <SpotlightCard className={cn("rounded-3xl p-8 transition-all hover:shadow-xl", item.className)}>
-      <div className={cn("mb-6 inline-flex rounded-2xl p-4", item.bg)}>
-        <Icon className={cn("h-8 w-8", item.text)} />
-      </div>
-      <h3 className="mb-3 font-display text-2xl font-bold tracking-tight text-foreground">{item.title}</h3>
-      <p className="text-base leading-relaxed text-muted-foreground">{item.description}</p>
-    </SpotlightCard>
+    <Link href="/products" className={cn("group block", item.className)}>
+      <SpotlightCard className={cn("h-full rounded-3xl p-8 transition-shadow hover:shadow-xl relative overflow-hidden", item.className)} spotlightColor={item.spotlight}>
+        <div className={cn("mb-6 inline-flex rounded-2xl p-4 relative z-10", item.bg)}>
+          <Icon className={cn("h-8 w-8", item.text)} />
+        </div>
+        <h3 className="mb-3 font-display text-2xl font-bold tracking-tight text-foreground relative z-10">{item.title}</h3>
+        <p className="text-base leading-relaxed text-muted-foreground relative z-10">{item.description}</p>
+        {/* Subtle background shape for visual interest */}
+        <motion.div
+          className={cn(
+            "absolute inset-0 rounded-3xl opacity-30 transform scale-150",
+            "bg-gradient-to-br from-transparent to-current", // Use current color for dynamic gradient
+            item.bg // Fallback or base color for the background element
+          )}
+          style={{ color: item.text.split('-')[1] }} // Extract color name from Tailwind class
+          initial={{ x: "-100%", y: "-100%", rotate: 0 }}
+          whileInView={{ x: "0%", y: "0%", rotate: 360 }}
+          transition={{ duration: 10, repeat: Infinity, ease: "linear", delay: Math.random() * 2 }}
+          viewport={{ once: true, amount: 0.1 }}
+        />
+      </SpotlightCard>
+    </Link>
   );
 }
+
+// Component for animating individual words
+const Word = ({ children, gradient = false }: { children: string; gradient?: boolean }) => {
+  return (
+    <motion.span 
+      variants={{
+        hidden: { y: "100%", opacity: 0, filter: "blur(8px)" },
+        visible: { y: "0%", opacity: 1, filter: "blur(0px)" }
+      }}
+      className={cn(
+        "inline-block whitespace-nowrap",
+        gradient && "text-transparent bg-clip-text bg-gradient-to-r from-primary via-violet-500 to-primary bg-[length:200%_auto] animate-gradient"
+      )}
+    >
+      {children}
+    </motion.span>
+  );
+};
+
+// Component for animating lines of text
+const Line = ({ children, gradientWord = "" }: { children: string; gradientWord?: string }) => {
+  const words = children.split(" ");
+  return (
+    <motion.span 
+      variants={{
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+      }}
+      className="block overflow-hidden"
+    >
+      {words.map((word, i) => (
+        <Word key={word + i} gradient={word === gradientWord}>{word}</Word>
+      ))}
+    </motion.span>
+  );
+};
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -177,45 +235,49 @@ export default function Home() {
     return (product as unknown as Record<string, unknown>)[field] as string | number;
   };
 
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 50 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8 } }
   };
 
+  const heroStagger = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.5 } }
+  };
+
   return (
-    <div className="flex min-h-screen flex-col bg-background font-body text-foreground selection:bg-primary/20 selection:text-primary">
+    <div className="flex min-h-screen flex-col bg-background font-body text-foreground selection:bg-primary/20 selection:text-primary relative overflow-hidden">
       
-      {/* Hero Section - Editorial Style */}
-      <section className="relative overflow-hidden pt-32 pb-24 lg:pt-48 lg:pb-40">
-        <div className="container mx-auto px-4 text-center">
+      {/* Hero Section - Kinetic Typography & Mesh Gradients */}
+      <section className="relative overflow-hidden pt-32 pb-24 lg:pt-48 lg:pb-40 flex items-center justify-center min-h-[80vh]">
+        <div className="container mx-auto px-4 text-center relative z-10">
           <motion.div
             initial="hidden"
             animate="visible"
-            variants={{
-              visible: { transition: { staggerChildren: 0.15 } }
-            }}
+            variants={heroStagger}
             className="mx-auto max-w-5xl"
           >
-            <motion.div variants={fadeInUp} className="mb-8 flex justify-center">
+            <motion.div variants={sectionVariants} className="mb-8 flex justify-center">
               <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary backdrop-blur-md">
                 <Sparkles className="mr-2 h-4 w-4" />
                 <span>Next-Gen School Supplies</span>
               </div>
             </motion.div>
             
-            <motion.h1 variants={fadeInUp} className="mb-8 font-display text-6xl font-black tracking-tighter text-foreground sm:text-8xl lg:text-9xl leading-[0.9]">
-              Elevate <br className="hidden sm:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-violet-500 to-primary bg-[length:200%_auto] animate-gradient">
-                Education.
-              </span>
+            <motion.h1 
+              variants={heroStagger}
+              className="mb-8 font-display text-6xl font-black tracking-[-0.05em] text-foreground sm:text-8xl lg:text-[10rem] leading-[0.9] md:leading-[0.8]"
+            >
+              <Line>Elevate</Line>
+              <Line gradientWord="Education.">Education.</Line>
             </motion.h1>
             
-            <motion.p variants={fadeInUp} className="mx-auto mb-12 max-w-2xl text-xl text-muted-foreground sm:text-2xl leading-relaxed">
+            <motion.p variants={sectionVariants} className="mx-auto mb-12 max-w-2xl text-xl text-muted-foreground sm:text-2xl leading-relaxed">
               Equipping the next generation of thinkers and creators with premium tools. 
               From Montessori essentials to advanced science labs.
             </motion.p>
             
-            <motion.div variants={fadeInUp} className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <motion.div variants={sectionVariants} className="flex flex-col items-center justify-center gap-4 sm:flex-row">
               <Link
                 href="/products"
                 className="group inline-flex h-14 w-full items-center justify-center rounded-full bg-primary px-10 text-base font-bold text-white transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 sm:w-auto"
@@ -235,7 +297,8 @@ export default function Home() {
         
         {/* Refined Background Mesh - Subtle & Premium */}
         <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
-          <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[1200px] h-[800px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background to-background blur-[100px] dark:from-primary/5" />
+          <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[1400px] h-[1000px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/15 via-background/0 to-background/0 blur-[150px] dark:from-primary/10 dark:via-dark-background/0 dark:to-dark-background/0" />
+          <div className="absolute bottom-[-10%] right-0 w-[1000px] h-[800px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-violet-500/10 via-background/0 to-background/0 blur-[120px] dark:from-violet-500/5 dark:via-dark-background/0 dark:to-dark-background/0" />
         </div>
       </section>
 
@@ -247,7 +310,7 @@ export default function Home() {
             <p className="mt-6 text-xl text-muted-foreground">Everything a modern institution needs, organized into premium collections.</p>
           </div>
           
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:auto-rows-[300px]">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-4 md:auto-rows-[300px]">
             {bentoCategories.map((item) => (
               <BentoCard key={item.title} item={item} />
             ))}
@@ -277,7 +340,7 @@ export default function Home() {
 
               return (
                 <Link key={product.id} href={`/products/${product.id}`} className="group block h-full">
-                  <SpotlightCard className="h-full rounded-2xl p-0 overflow-hidden border-gray-200/60 dark:border-gray-800/60 bg-white dark:bg-gray-900/50 transition-transform duration-300 hover:-translate-y-1">
+                  <SpotlightCard className="h-full rounded-2xl p-0 overflow-hidden border-gray-200/60 dark:border-gray-800/60 bg-white dark:bg-gray-900/50 transition-transform duration-300 hover:-translate-y-1" spotlightColor="rgba(79, 70, 229, 0.08)">
                     <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-800/50">
                       <ProductIllustration category={category} size={240} />
                     </div>
