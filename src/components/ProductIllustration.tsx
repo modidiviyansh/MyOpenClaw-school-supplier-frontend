@@ -311,13 +311,13 @@ export default function ProductIllustration({
     <div
       className="flex h-full w-full items-center justify-center"
       style={{
-        background: `radial-gradient(ellipse at 30% 30%, ${colors.accent}40, transparent 70%), radial-gradient(ellipse at 70% 70%, ${colors.secondary}20, transparent 70%), linear-gradient(135deg, ${colors.accent}15, ${colors.primary}08)`,
+        background: `linear-gradient(135deg, ${colors.accent}10, transparent 50%, ${colors.primary}05)`,
       }}
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
+        initial={{ opacity: 0, scale: 1 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.3 }}
       >
         <IllustrationComponent size={size} />
       </motion.div>
